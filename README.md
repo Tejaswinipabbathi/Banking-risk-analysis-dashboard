@@ -2,7 +2,7 @@
 
 A full-stack interactive dashboard for loan approval decision support, built with React, TypeScript, and Node.js. Designed to simulate real-world banking risk analysis workflows used by financial institutions.
 
-**Live Demo:** [View Dashboard](https://banking-risk-analysis-dashboard.replit.app)
+**Live Demo:** [View Dashboard](https://risk-insight-dashboard--tejaswinikrish1.replit.app/)
 
 ---
 
