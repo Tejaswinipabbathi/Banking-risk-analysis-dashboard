@@ -1,0 +1,598 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Banking Risk Analysis Dashboard API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: banking
+    description: Banking risk analysis operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /banking/kpis:
+    get:
+      operationId: getBankingKpis
+      tags: [banking]
+      summary: Get KPI summary metrics
+      description: Returns top-level KPIs for the dashboard
+      parameters:
+        - name: gender
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+        - name: income_level
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+        - name: loan_status
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: KPIs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BankingKpis"
+
+  /banking/approval-by-income:
+    get:
+      operationId: getApprovalByIncome
+      tags: [banking]
+      summary: Loan approval rate by income group
+      description: Returns loan approval rates grouped by income bracket
+      parameters:
+        - name: gender
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+        - name: loan_status
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: Approval by income
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ApprovalByIncomeItem"
+
+  /banking/default-by-age:
+    get:
+      operationId: getDefaultByAge
+      tags: [banking]
+      summary: Default rate by age group
+      description: Returns default rates grouped by age bracket
+      parameters:
+        - name: gender
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+        - name: income_level
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: Default by age
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DefaultByAgeItem"
+
+  /banking/customer-segments:
+    get:
+      operationId: getCustomerSegments
+      tags: [banking]
+      summary: Customer segmentation by engagement level
+      description: Returns customer distribution by engagement level
+      parameters:
+        - name: gender
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+        - name: income_level
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: Customer segments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CustomerSegmentItem"
+
+  /banking/balance-vs-risk:
+    get:
+      operationId: getBalanceVsRisk
+      tags: [banking]
+      summary: Account balance vs loan risk scatter data
+      description: Returns scatter plot data of account balance against loan risk score
+      parameters:
+        - name: gender
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+        - name: income_level
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+        - name: loan_status
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: Balance vs risk data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BalanceVsRiskItem"
+
+  /banking/risk-distribution:
+    get:
+      operationId: getRiskDistribution
+      tags: [banking]
+      summary: Loan risk category distribution
+      description: Returns count of customers in each risk category
+      parameters:
+        - name: gender
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+        - name: income_level
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: Risk distribution
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RiskDistributionItem"
+
+  /banking/transaction-volume:
+    get:
+      operationId: getTransactionVolume
+      tags: [banking]
+      summary: Transaction volume by customer segment
+      description: Returns average transaction volume grouped by engagement segment
+      parameters:
+        - name: gender
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+        - name: income_level
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: Transaction volume
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TransactionVolumeItem"
+
+  /banking/customers:
+    get:
+      operationId: getCustomers
+      tags: [banking]
+      summary: Get paginated customer list
+      description: Returns customer records with filters
+      parameters:
+        - name: gender
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+        - name: income_level
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+        - name: loan_status
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: ["integer", "null"]
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Customer list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerListResponse"
+
+  /banking/score-applicant:
+    post:
+      operationId: scoreApplicant
+      tags: [banking]
+      summary: Score a loan applicant
+      description: Accepts applicant attributes and returns a risk score, recommendation, and key factors
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicantInput"
+      responses:
+        "200":
+          description: Scoring result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScoringResult"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    BankingKpis:
+      type: object
+      properties:
+        totalCustomers:
+          type: integer
+        loanApprovalRate:
+          type: number
+        defaultRate:
+          type: number
+        avgLoanAmount:
+          type: number
+        totalLoans:
+          type: integer
+        approvedLoans:
+          type: integer
+        defaultedLoans:
+          type: integer
+      required:
+        - totalCustomers
+        - loanApprovalRate
+        - defaultRate
+        - avgLoanAmount
+        - totalLoans
+        - approvedLoans
+        - defaultedLoans
+
+    ApprovalByIncomeItem:
+      type: object
+      properties:
+        incomeGroup:
+          type: string
+        approvalRate:
+          type: number
+        totalLoans:
+          type: integer
+        approvedLoans:
+          type: integer
+      required:
+        - incomeGroup
+        - approvalRate
+        - totalLoans
+        - approvedLoans
+
+    DefaultByAgeItem:
+      type: object
+      properties:
+        ageGroup:
+          type: string
+        defaultRate:
+          type: number
+        totalLoans:
+          type: integer
+        defaultedLoans:
+          type: integer
+      required:
+        - ageGroup
+        - defaultRate
+        - totalLoans
+        - defaultedLoans
+
+    CustomerSegmentItem:
+      type: object
+      properties:
+        segment:
+          type: string
+        count:
+          type: integer
+        percentage:
+          type: number
+      required:
+        - segment
+        - count
+        - percentage
+
+    BalanceVsRiskItem:
+      type: object
+      properties:
+        customerId:
+          type: integer
+        accountBalance:
+          type: number
+        riskScore:
+          type: number
+        riskCategory:
+          type: string
+        loanStatus:
+          type: string
+        incomeGroup:
+          type: string
+      required:
+        - customerId
+        - accountBalance
+        - riskScore
+        - riskCategory
+        - loanStatus
+        - incomeGroup
+
+    RiskDistributionItem:
+      type: object
+      properties:
+        riskCategory:
+          type: string
+        count:
+          type: integer
+        percentage:
+          type: number
+        avgLoanAmount:
+          type: number
+      required:
+        - riskCategory
+        - count
+        - percentage
+        - avgLoanAmount
+
+    TransactionVolumeItem:
+      type: object
+      properties:
+        segment:
+          type: string
+        avgTransactionAmount:
+          type: number
+        avgFrequency:
+          type: number
+        totalVolume:
+          type: number
+      required:
+        - segment
+        - avgTransactionAmount
+        - avgFrequency
+        - totalVolume
+
+    CustomerRecord:
+      type: object
+      properties:
+        customerId:
+          type: integer
+        age:
+          type: integer
+        gender:
+          type: string
+        income:
+          type: number
+        occupation:
+          type: string
+        incomeGroup:
+          type: string
+        accountBalance:
+          type: number
+        accountType:
+          type: string
+        tenure:
+          type: integer
+        loanAmount:
+          type: ["number", "null"]
+        loanStatus:
+          type: ["string", "null"]
+        repaymentStatus:
+          type: ["string", "null"]
+        avgTransactionAmount:
+          type: number
+        transactionFrequency:
+          type: integer
+        engagementLevel:
+          type: string
+        riskCategory:
+          type: string
+        riskScore:
+          type: number
+      required:
+        - customerId
+        - age
+        - gender
+        - income
+        - occupation
+        - incomeGroup
+        - accountBalance
+        - accountType
+        - tenure
+        - loanAmount
+        - loanStatus
+        - repaymentStatus
+        - avgTransactionAmount
+        - transactionFrequency
+        - engagementLevel
+        - riskCategory
+        - riskScore
+
+    ApplicantInput:
+      type: object
+      properties:
+        age:
+          type: integer
+        annualIncome:
+          type: number
+        accountBalance:
+          type: number
+        requestedLoanAmount:
+          type: number
+        accountTenureYears:
+          type: integer
+        avgMonthlyTransactions:
+          type: integer
+        avgTransactionAmount:
+          type: number
+      required:
+        - age
+        - annualIncome
+        - accountBalance
+        - requestedLoanAmount
+        - accountTenureYears
+        - avgMonthlyTransactions
+        - avgTransactionAmount
+
+    ScoringFactor:
+      type: object
+      properties:
+        factor:
+          type: string
+        impact:
+          type: string
+        detail:
+          type: string
+        score:
+          type: number
+      required:
+        - factor
+        - impact
+        - detail
+        - score
+
+    ScoringResult:
+      type: object
+      properties:
+        riskScore:
+          type: number
+        riskCategory:
+          type: string
+        recommendation:
+          type: string
+        approvalProbability:
+          type: number
+        estimatedDefaultProbability:
+          type: number
+        maxRecommendedLoanAmount:
+          type: number
+        loanToIncomeRatio:
+          type: number
+        keyFactors:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScoringFactor"
+        incomeGroup:
+          type: string
+        engagementLevel:
+          type: string
+      required:
+        - riskScore
+        - riskCategory
+        - recommendation
+        - approvalProbability
+        - estimatedDefaultProbability
+        - maxRecommendedLoanAmount
+        - loanToIncomeRatio
+        - keyFactors
+        - incomeGroup
+        - engagementLevel
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    CustomerListResponse:
+      type: object
+      properties:
+        customers:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomerRecord"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+        totalPages:
+          type: integer
+      required:
+        - customers
+        - total
+        - page
+        - limit
+        - totalPages
